@@ -73,9 +73,12 @@ $x.LoadXml({_kutip(xml)})
 
 # --- jadwal Task Scheduler ----------------------------------------------------
 
-def _pythonw() -> str:
+def _perintah() -> tuple[str, str]:
+    """(program, argumen) untuk Task Scheduler. Versi exe memanggil dirinya sendiri."""
+    if getattr(sys, "frozen", False):
+        return sys.executable, "--pengingat"
     w = Path(sys.executable).with_name("pythonw.exe")
-    return str(w if w.exists() else sys.executable)
+    return str(w if w.exists() else sys.executable), f'"{Path(__file__).resolve()}"'
 
 
 def aktif() -> bool:
@@ -85,8 +88,9 @@ def aktif() -> bool:
 
 def aktifkan(jam: str = JAM) -> tuple[bool, str]:
     """Pasang tugas harian. Kalau komputer mati pada jamnya, dijalankan begitu menyala."""
+    program, argumen = _perintah()
     skrip = f"""
-$a = New-ScheduledTaskAction -Execute {_kutip(_pythonw())} -Argument {_kutip('"' + str(Path(__file__).resolve()) + '"')}
+$a = New-ScheduledTaskAction -Execute {_kutip(program)} -Argument {_kutip(argumen)}
 $t = New-ScheduledTaskTrigger -Daily -At {_kutip(jam)}
 $s = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 5)
 Register-ScheduledTask -TaskName {_kutip(TASK)} -Action $a -Trigger $t -Settings $s -Description 'Notifikasi tenggat penugasan dari aplikasi Arsip Penugasan.' -Force | Out-Null

@@ -21,7 +21,7 @@ import konfig  # noqa: E402
 import pengingat  # noqa: E402
 import rekap  # noqa: E402
 import tema as T  # noqa: E402
-from core import (BATAL, BERJALAN, DUKUNG, JENIS, JENIS_OUTPUT, KKP, LABEL, LEWAT_TENGGAT,  # noqa: E402
+from core import (VERSI, BATAL, BERJALAN, DUKUNG, JENIS, JENIS_OUTPUT, KKP, LABEL, LEWAT_TENGGAT,  # noqa: E402
                   OUTPUT, PERAN, SELESAI, ST, STATUS, SUBFOLDER, TAHAP, Arsip, Penugasan, bersihkan,
                   format_tanggal, hari_kalender, hari_kerja, parse_tanggal, perlu_diingat)
 
@@ -489,7 +489,14 @@ class App(BaseTk):
 
     def __init__(self):
         super().__init__()
-        self.title("Arsip Penugasan")
+        self.title(f"Arsip Penugasan {VERSI}")
+        # Di versi exe, berkas bawaan diekstrak ke sys._MEIPASS.
+        ikon = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)) / "ikon.ico"
+        if ikon.exists():
+            try:
+                self.iconbitmap(default=str(ikon))  # default= ikut berlaku untuk dialog
+            except tk.TclError:
+                pass
         T.pasang(self)
         self.geometry(f"{T.px(1360)}x{T.px(800)}")
         self.minsize(T.px(1150), T.px(640))
@@ -510,7 +517,7 @@ class App(BaseTk):
         self.arsip = Arsip(Path(root))
         self.bangun()
         self.muat_ulang()
-        T.judul_gelap(self)
+        self.after(100, lambda: T.judul_gelap(self))  # setelah jendela tampil
         self.after(300, self.perbarui_tombol_pengingat)
         self.ok = True
 
@@ -1161,6 +1168,8 @@ class App(BaseTk):
 
 
 if __name__ == "__main__":
+    if "--pengingat" in sys.argv:  # dipanggil Task Scheduler (versi exe)
+        sys.exit(pengingat.main())
     try:
         from ctypes import windll
         windll.shcore.SetProcessDpiAwareness(1)  # teks tajam di layar ber-skala

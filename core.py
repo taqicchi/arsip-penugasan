@@ -29,6 +29,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+VERSI = "1.0.0"
 META_FILE = "penugasan.json"
 CEKLIS_FILE = "ceklis.json"
 

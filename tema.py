@@ -137,6 +137,8 @@ def judul_gelap(win: tk.Misc) -> None:
         r, g, b = (int(SURFACE_2[i:i + 2], 16) for i in (1, 3, 5))
         warna = ctypes.c_int(r | g << 8 | b << 16)  # COLORREF = 0x00BBGGRR
         ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(warna), ctypes.sizeof(warna))
+        # Atribut baru terlihat setelah bingkai digambar ulang: SWP_NOSIZE|NOMOVE|NOZORDER|FRAMECHANGED.
+        ctypes.windll.user32.SetWindowPos(hwnd, 0, 0, 0, 0, 0, 0x1 | 0x2 | 0x4 | 0x20)
     except Exception:
         pass
 

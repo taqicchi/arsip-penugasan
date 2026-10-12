@@ -3,8 +3,21 @@
 Aplikasi desktop (Python + Tkinter) untuk menyimpan berkas tiap penugasan ke struktur
 folder yang tetap. Tampilannya mengikuti tema Q Studio Tracker (`tema.py`).
 
-**Menjalankan:** klik dua kali `Buka Arsip Penugasan.bat`. Saat pertama dibuka,
-aplikasi meminta folder induk (disimpan di `%APPDATA%\ArsipPenugasan\config.json`).
+## Unduh & pasang
+
+Ambil dari halaman [Releases](https://github.com/taqicchi/arsip-penugasan/releases):
+
+- **`ArsipPenugasan-vX.Y.Z.exe`** — satu berkas, tidak perlu Python. Klik dua kali.
+  Windows SmartScreen bisa menampilkan "Windows protected your PC" karena exe tidak
+  ditandatangani: pilih *More info → Run anyway*.
+- **`ArsipPenugasan-python-vX.Y.Z.zip`** — untuk komputer yang memblokir exe tak bertanda
+  tangan (Windows 11 dengan *Smart App Control* aktif, atau PC kantor dengan kebijakan
+  aplikasi). Butuh Python 3.11+. Ekstrak, jalankan `Pasang Pustaka.bat` sekali, lalu buka
+  dengan `Buka Arsip Penugasan.bat`.
+
+Saat pertama dibuka, aplikasi meminta folder induk (disimpan di
+`%APPDATA%\ArsipPenugasan\config.json`). Data tidak pernah disimpan di dalam folder aplikasi,
+jadi mengganti versi cukup dengan mengganti exe/folder-nya.
 
 **Pustaka tambahan** (opsional, tapi disarankan):
 
@@ -77,6 +90,21 @@ Untuk mengganti daftar bawaan, buat `ceklis.json` di folder induk:
 Tiap butir: `[label, subfolder (st/kkp/dukung/output), kata kunci nama berkas]`.
 Kata kunci kosong = berkas apa pun. Berkas bernama "Konsep …" tidak mencentang butir
 yang kata kuncinya tidak memuat "konsep".
+
+## Membuat rilis
+
+1. Naikkan `VERSI` di `core.py` (mis. `"1.1.0"`), commit, push.
+2. Buat dan push tag yang sama persis dengan awalan `v`:
+   ```
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+3. GitHub Actions (`.github/workflows/rilis.yml`) menjalankan tes, membangun exe, dan
+   membuat Release berisi exe, zip versi Python, dan `SHA256SUMS.txt`. Kalau `VERSI` tidak
+   sama dengan tag, build sengaja gagal.
+
+Untuk mencoba build di komputer sendiri: `build.bat` → `dist\ArsipPenugasan.exe`.
+Ikon dibuat ulang dengan `python alat/buat_ikon.py`.
 
 ## Tes
 
